@@ -27,7 +27,7 @@ p {
 Este documento descreve o processo e o raciocínio usado para derivar casos de teste para o método ``validateIdentifier()`` da classe ``Identifier()``. Este processo foi baseado no exemplo do autor do livro texto da disciplina, Mauricio Aniche, ao derivar testes para o método ``substringsBetween()``, discutido em aula.
 
 
-## Passo 2 - Explorar o funcionamento do programa
+## Passo 2 - Explorar o funcionamento do programa {#sec-p2}
 
 O processo realizado foi o seguinte:
 
@@ -56,115 +56,36 @@ Como vemos no passo anterior, ``s`` pode ser qualquer string, mas ao verificarmo
   - ``s[0] === letra``;
   - ``s[0] === LETRA``;
   - ``s[0] !== letra`` e ``s[0] !== LETRA``;
-- ``len(s)>1`` e ``len(s)<=6``;
-- ``s``contém apenas letras;
-- ``s``contém apenas números;
-- ``s``contém letras e numeros;
-- ``s``contém caracteres especiais.
-
-#### Parâmetro ``open``: 
-
-``open`` também pode ser qualquer coisa. Vou tentar com nulo e vazio, pois aprendi com o parâmetro ``str`` que esses casos são especiais neste método. Também vou tentar strings com comprimento 1 e maior que 1.
-
-  - ``open`` com valor ``null``;
-  - ``open`` vazia;
-  - ``len(open)==1``;
-  - ``len(open)>1``.
+- ``len(s)>1`` e ``len(s)<=6``, sendo:
+  - ``s`` contém apenas letras;
+  - ``s`` contém apenas números;
+  - ``s`` contém letras e numeros;
+  - ``s`` contém caracteres especiais.
 
 
-#### Parâmetro ``close``: 
 
-``close`` é exatamente como o anterior.
+### Combinações de Entradas
 
-  - ``close`` com valor ``null``;
-  - ``close`` vazia;
-  - ``len(close)==1``;
-  - ``len(close)>1``.
+Por ter apenas um parâmetro de entrada, não há  combinações de entradas, mas dentro da mesmaentrada temos as 9 possibilidades listadas acima.
 
 
-### Para combinações de entradas
+### Saídas Esperadas
 
-Fica claro que as três variáveis têm uma relação de dependência. 
-
-- (``str``, ``open``, ``close``) - ``open`` e ``close`` podem ou não estar na string. Além disso, ``open`` pode existir, mas ``close`` pode não existir em ``str`` (e vice-versa):
-  - ``str`` não contém nem ``open`` nem ``close``;
-  - ``str`` contém ``open`` mas não contém ``close``;
-  - ``str`` não contém ``open`` mas contém ``close``;
-  - ``str`` contém ``open`` e ``close``;
-  - ``str`` contém ``open`` e ``close`` muitas vezes.
-
-O documento não menciona explicitamente que as tags podem não existir em ``str``, nem menciona que a tag ``open`` pode estar presente, mas a tag de ``close`` não. Eu vi este caso por causa da minha experiência como testador.
-
-
-### Para saídas esperadas
-
-Finalmente, refleti sobre as possíveis saídas. O método retorna uma array de sub-strings. Posso ver um conjunto de possíveis saídas diferentes, tanto para o próprio array quanto para as strings dentro do array:
-
-- Array de strings
-  - array com valor ``null``;
-  - array vazio;
-  - array com um elemento;
-  - array com muitos elementos.
-- Cada string individualmente dentro do array de saída
-  - vazia;
-  - apenas um caracter;
-  - múltiplos caracteres.   
+Por fim, vamos analizar as saidas possíveis. Este método é do tipo boolean, então não há muitas possibilidades, apenas ``true`` e ``false``, e os motivos para cada possibilidade foram discutidos no [Passo @sec-p2].
 
 
 ## Passo 4 - Identificar os valores limite
 
-Bugs nos limites do domínio de entrada são comuns em sistemas de software. Quando criamos partições, elas têm valores limites próximos que "dividem" as partições equivalentes. Sempre que um valor limite é identificado, gosto de testar o que acontece com o programa quando as entradas vão de um limite para o outro. Ou seja, teste de dois pontos quando há um valor limite. Um teste é para o *on point* , que é o ponto que está dentro da partição; e o outro teste é para o "off point", que é o ponto mais próximo do valor limite que pertence à partição à qual o *on point* não pertence (ou seja, a outra partição).
+Valores no limite dos consjuntos de entrada são comunmente confundidos no processamento do método, fazendo-se importante verifica-los em especial. Neste método, não há muitos valores limites, já que a diferença entre a maioria dos conjuntos são bem definidas. Os únicos conjuntos que há valores limites, são os conjuntos referentes ao comprimento da string, sendo o limite inferior, entrada com pelo menos um caractere, o qual já está listado para testar, pois entra em outro parametro de teste. E o outro valor limite é o limite superior, entrada com até 6 caracteres, para isto será adicionado mais dois testes que passam em todos as características, com 6 e com 7 caracteres:
 
-No caso de  ``substringsBetween()``, um limite acontece quando a string de saída passa de vazia para não vazia, isto é, o programa para de retornar vazio e (possivelmente) começará a retornar algo. Eu já cobri esse limite, pois tem partições para ambos os casos.  O método pode receber o parâmetro ``str`` com nenhuma substring, uma substring ou várias substrings. E, as tags ``open`` e ``closed`` podem não estar na string; ou, mais importante, elas podem estar em ``str``, mas sem substring entre elas. Este é um limite que vou chamar de "sem substring de saída/uma substring de saída", e ainda não foi testado, devo testar. 
+- ``len(s)==6``, ``s``="abcdef";
+- ``len(s)==7``, ``s``="abcdefg".
 
-Neste caso, sempre que identificamos um limite, criamos dois testes para ele, um para cada lado do limite (*in point* e *out point*). Para o limite "sem substring de saída/uma substring de saída", os dois testes são os seguintes:
-  - ``str`` contém ``open`` e também ``close``, mas sem caracteres entre elas
-  - ``str`` contém ``open`` e também ``close``, mas com caracteres entre elas
 
 ## Passo 5 -  Derivar os casos de teste
 
-Idealmente, combinaríamos todas as partições que criamos para cada uma das entradas: $4 × 4 × 4 × 5 = 320$ testes. Para evitar uma explosão de casos de teste (320), vou eliminar algumas combinações de partições que possuem uma chance pequena de revelar erros. A ideia é testar casos excepcionais apenas uma vez e não combiná-los. Portanto, todas as partições com ``null`` ou vazio serão testar individualmente e não combinadas com outras partições. Também, existem partições que não necessitam ser completamente combinadas:
+Como dito anteriormente, este método não possui muitas combinações, as quais, geralmente, onde podemos derivar bastante. Porém, podemos derivar os testes de apenas números, pois ao testar se a string começa com letra, impossibilita a possibilidade de termos uma string contendo apenas números. Além disso também podemos testar o limite superior junto ao teste com quantidade entre 1 a 6 caracteres, fazendo com que todos os testes deste conjunto sejam com comprimento de 6 caracteres.
 
-- ``len(str)==1`` apenas dois testes são necessários:
-  - Apenas um caracter em ``str`` que é encontrado por ``open`` e ``close`` e outro que não é;
-- não acredito que o método trata ``open`` e ``close`` de tamanhos diferentes de diferentes maneiras, então não são necessárias as 4 combinações: (``len(open)==1``, ``len(close)==1``); (``len(open)>1``, ``len(close)==1``); (``len(open)==1``, ``len(close)>1``) e ()``len(open) > 1``, ``len(close) > 1``):
-  - Apenas (``len(open)== 1``, ``len(close)==1``) e ``len(open)>1``, ``len(close)>1``). 
-
-Portanto, seguindo essas duas ideias, na lista a seguir, marquei com um  [x] partições que não testarei várias vezes: 
-
-- ``str``: ``null`` [x], string vazia [x], ``len(str)==1`` [x], ``len(str)>1``;
-- ``open``: ``null`` [x], empty string [x], ``len(open)==1``, ``len(open)>1``;
-- ``close``: ``null`` [x], empty string [x], ``len(close)==1``, ``len(close)>1``; 
-- (``str``, ``open``, ``close``): string não contém a tag ``open`` nem  a tag ``close``, string contém a tag ``close``, mas não contém a tag ``open``, string contém as tags ``open`` e ``close``, string contém as tags ``open`` e ``close`` muitas vezes.
-
-Podemos derivar os casos de teste realizando a combinação adequada entre as partições. 
-
-- Casos de teste de excessão
-  - T01: ``str==null``
-  - T02: ``str`` vazia
-  - T03: ``open==null``
-  - T04: ``open`` vazia
-  - T05: ``close ==null``
-  - T06: ``close`` vazia
-- Casos de teste considerando ``len(str)==1``
-  - T07: O único caracter de ``str`` casa com ``open``
-  - T08: O único caracter de ``str`` casa com ``close``
-  - T09: O único caracter de ``str`` não casa com ``open`` nem ``close``
-  - T10: O único caracter de ``str`` casa com ``open`` e ``close``
-- Casos de teste considerando ``len(str)>1``, ``len(open)==1`` e ``len(close)==1``
-  - T11: ``str`` não contém ``open`` nem ``close``
-  - T12: ``str`` contém ``open`` mas não contém but does not contain the ``close`` 
-  - T13: ``str`` contém ``close`` mas não contém ``open`` 
-  - T14: ``str`` contém ``open`` e ``close``
-  - T15: ``str`` contém ``open`` e ``close`` múltiplas vezes
-- Casos de teste considerando ``len(str)>1``, ``len(open)>1`` e ``len(close)>1``
-  - T16: similar ao T11
-  - T17: similar ao T12
-  - T18: similar ao T13 
-  - T19: similar ao T14
-  - T20: similar ao T15
-- Casos de teste de valor limite
-  - T21: ``str`` contém ``open`` e ``close`` sem caracteres entre eles
 
 ## Passo 6 - Automatizar os casos de teste usando JUnit
 
@@ -172,9 +93,8 @@ Podemos derivar os casos de teste realizando a combinação adequada entre as pa
 Aqui você deve descrever as dificuldades ou limitações que teve ao implementar os casos de teste usando JUnit.
 :::
 
+A maior dificuldade encontrada está no quanto e aonde é possível derivar os testes, alem da organização ao juntar diferentes entradas dentro dos testes. 
+
 ## Passo 7 - Aumentar a suíte de testes por meio de experiência e criatividade
 
-Ao revisitar os testes, notei que nunca testei strings com espaços. Decidi projetar dois testes extras baseados em T15 e T20 (não alterei esses dois casos de teste, adicionei dois casos de teste extras), ambos sobre "``str`` contém as tags ``open`` e ``close`` várias vezes": 
-
-  - (T22) um para ``len(open)==1`` e ``len(close)==1``;
-  - (T23) um para ``len(open)>1`` e ``len(close)>1``, mas tamanhos de ``open`` e ``close`` bastante grandes.
+Este exemplo não há muita margem para testes muitos diferentes. Acredito que os testes mais diferentes possiveis são os testes com valor null e vazio, além do uso de caracteres especiais, principalmente caracteres em branco. Porém estes testes foram implementados nos passos anteriores.
