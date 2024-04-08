@@ -51,16 +51,22 @@ Como vemos no passo anterior, ``s`` pode ser qualquer string, mas ao verificarmo
 
 - ``s`` com valor ``null``;
 - ``s`` vazia(``len(s)<1``);
-- ``len(s)>6``;
 - ``len(s)==1``, sendo:
   - ``s[0] === letra``;
   - ``s[0] === LETRA``;
-  - ``s[0] !== letra`` e ``s[0] !== LETRA``;
+  - ``s[0] === numero``;
+  - ``s[0] === caractere especial``;
 - ``len(s)>1`` e ``len(s)<=6``, sendo:
   - ``s`` contém apenas letras;
   - ``s`` contém apenas números;
   - ``s`` contém letras e numeros;
   - ``s`` contém caracteres especiais.
+- ``len(s)>6``, sendo:
+  - ``s`` contém apenas letras;
+  - ``s`` contém apenas números;
+  - ``s`` contém letras e numeros;
+  - ``s`` contém caracteres especiais.
+
 
 
 
