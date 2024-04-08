@@ -93,7 +93,9 @@ Como dito anteriormente, este método não possui muitas combinações, as quais
 Aqui você deve descrever as dificuldades ou limitações que teve ao implementar os casos de teste usando JUnit.
 :::
 
-A maior dificuldade encontrada está no quanto e aonde é possível derivar os testes, alem da organização ao juntar diferentes entradas dentro dos testes. 
+Como maior dificuldade podemos resaltar a escolha de multiplos testes para um mesmo conjunto, como por exemplo, no conjunto de ``s>6``, iremos colocar testes com apenas letras, com apenas numeros, com caracteres especiais, vamos combinar todas as 3 possibilidades, e etc. Como resultado, foi criado um teste com apenas letras, um com letras e números, e outro com caracteres especiais. Esta decisão foi baseado no fato de testes que não iniciam com letras ja foi implementando, fazendo dessinteressante testes com apenas números e/ou caracteres.
+
+Além disto teve a dificuldade no processo de quanto e aonde é possível derivar os testes, alem da organização ao juntar diferentes entradas dentro dos testes. 
 
 ## Passo 7 - Aumentar a suíte de testes por meio de experiência e criatividade
 
