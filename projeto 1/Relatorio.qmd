@@ -1,7 +1,7 @@
 ---
 title: "Relatório Trabalho Prático de Teste Baseado em Especificação"
 subtitle: "Método para adição de números inteiros muito, muito grandes"
-author: "Aluno Teste de Software"
+author: "Vinicius Simões Vieira"
 toc: true
 toc-title: Sumário
 number-sections: false
@@ -24,66 +24,51 @@ p {
 
 ## Introdução
 
-Este documento descreve o processo usado pelo autor do livro texto da disciplina, Mauricio Aniche, ao usar teste baseado em especificação para derivar casos de teste para o método ``substringsBetween()``, discutido em aula.
+Este relatório descreve o processo da criação de testes automatizados para um método específico que realiza a soma de dois números grandes manipulando cada número com um array, separando cada algarismo do número em posições no array. E como retorno deste método, será mais um array contendo os algarismos do resultado da soma.
 
-Use este relatório como um exemplo de como você deve confeccionar o seu relatório. Veja, não precisa ser idêntico ao que está aqui e, claro, não deve ser uma cópia deste documento.
+A seguir temos o processo de cada um dos passos realizados neste trabalho.
+
+
 
 ## Passo 2 - Explorar o funcionamento do programa
 
-Meu processo foi o seguinte:
+Neste passo vamos verificar o funcionamento do método, anotando as entradas e saidas esperadas:
 
-- Vamos ver o programa trabalhando em um caso de sucesso. Vou passar a string "abcd" com a tag ``open`` "a" e a tag ``close`` "d";
-  - <(``str``="abcd", ``open``="a", ``close``="d"), (["bc"])>
-- Em seguida, vamos ver o que acontece se houver várias substrings na string principal. Vou passar a string "abcdabcdab" com as mesmas tags ``open`` e ``close``;
-  - <(``str``="abcdabcdab", ``open``="a", ``close``="d"), (["bc", "bc"])>
-- Vou repetir o segundo teste, dobrando os "a"s e os "d"s em todos os parâmetros. Também mudei um dos "bc" para "bf", para que seja mais fácil verificar se o método retorna duas substrings diferentes;
-  - <(``str``="aabcddaabfddaab", ``open``="aa", ``close``="dd"), (["bc", "bf"])>
+- O método deve receber dois arrays de inteiros formando dois números e retorar um array de inteiro formando o resultado deles:
+  - <(``left``="[1, 2, 3]", ``rigth``="[3, 2, 1]"), ("[4, 4, 4]")>
+- Caso os parâmetros de entrada (``left`` ou ``rigth``) contenham algum inteiro que nao esteja entre 0 e 9, o método deve retornar um ``IllegalArgumentException``:
+  - <(``left``="[1, 2, 3]", ``rigth``="[3, 2, 1]"), ("``IllegalArgumentException``")>
+- Caso os parâmetros de entrada (``left`` ou ``rigth``) sejam uma lista vazia, o método também deve retornar uma lista vazia:
+  - <(``left``="[]", ``rigth``="[3, 2, 1]"), ("[]")>
+- Caso os parâmetros de entrada (``left`` ou ``rigth``) sejam ``null``, o método também deve retornar ``null``:
+  - <(``left``="``null``", ``rigth``="[3, 2, 1]"), ("``null``")>
+
+
 
 ## Passo 3 - Identificar as partições
 
 ### Para cada entrada individualmente
 
-#### Parâmetro ``str``: 
+#### Parâmetro ``left`` e ``rigth``: 
   
-``str`` pode ser qualquer string. A especificação menciona os casos nulos e vazios; eu os teria testado de qualquer maneira, porque eles são sempre bons casos de teste excepcionais. Dado que esta é uma string (que é basicamente uma lista de caracteres), também vou testar o que acontece se a string tiver comprimento 1.
+Os parãmetros ``left`` e ``rigth`` possuem a mesma estrutura e são esperadas os mesmos tipos de dados(número inteiro, separando os algarismos dentro de um array), então irá ser discutido e explanada está análise apenas uma vez, mas nos proximos passos, ao realizar a combinação das entradas estes valores serão duplicados para realizar o calculo de possibilidades de testes distintos.
 
-- ``str`` com valor ``null``;
-- ``str`` vazia;
-- ``len(str)==1``;
-- ``len(str)>1`` (qualquer string).
+Sendo assim, estes parâmetros deven ser uma lista de inteiros(``List<Integer>``), que podem possuir valor nulo, uma lista vazia(``len(left)==0``), uma lista com apenas um algarismo(``len(left)==1``), uma lista com n algarismos(``len(left)>1``), sendo n maior que 1, e para os casos que possuem algarismos podemos ter numeros inteiros válidos([0, 9]) e inválidos([-∞, -1],[9, +∞]). Com isto temos a seguinte lista:
+- ``left`` === ``null``;
+- ``left`` === [](vazio);
+- ``len(left)==1``;
+  - ``left[0]`` == [0, 9];
+  - ``left[0]`` != [0, 9];
+- ``len(left)>1`` (qualquer numero com, pelomenos, dois algarismos).
+  - ``left[[0, --n]]`` == [0, 9];
+  - ``left[[0, --n]]`` != [0, 9];
 
-#### Parâmetro ``open``: 
-
-``open`` também pode ser qualquer coisa. Vou tentar com nulo e vazio, pois aprendi com o parâmetro ``str`` que esses casos são especiais neste método. Também vou tentar strings com comprimento 1 e maior que 1.
-
-  - ``open`` com valor ``null``;
-  - ``open`` vazia;
-  - ``len(open)==1``;
-  - ``len(open)>1``.
-
-
-#### Parâmetro ``close``: 
-
-``close`` é exatamente como o anterior.
-
-  - ``close`` com valor ``null``;
-  - ``close`` vazia;
-  - ``len(close)==1``;
-  - ``len(close)>1``.
 
 
 ### Para combinações de entradas
 
-Fica claro que as três variáveis têm uma relação de dependência. 
+Com isto vemos que os parametros possuem uma relação de depêndencia, já que ambos precisam ser válidos para que haja um resultado válido, portanto eles serão combinados entre si, para verificar cada caso possível das entradas. Isto siginifica que podemos possuir até 36 casos possíveis noeste momento, sendo left qualquer um dos seis casos, para cada um dos 6 casos de rigth, ``6 x 6 = 36``, felizmente estes casos serão derivados em uma menor quantidade de casos, mais a frente no relatório. Porém antes iremos coletar mais informações e possibilidades para o método, explorando as saidas esperadas e os valores limites nos próximos passos.
 
-- (``str``, ``open``, ``close``) - ``open`` e ``close`` podem ou não estar na string. Além disso, ``open`` pode existir, mas ``close`` pode não existir em ``str`` (e vice-versa):
-  - ``str`` não contém nem ``open`` nem ``close``;
-  - ``str`` contém ``open`` mas não contém ``close``;
-  - ``str`` não contém ``open`` mas contém ``close``;
-  - ``str`` contém ``open`` e ``close``;
-  - ``str`` contém ``open`` e ``close`` muitas vezes.
-
-O documento não menciona explicitamente que as tags podem não existir em ``str``, nem menciona que a tag ``open`` pode estar presente, mas a tag de ``close`` não. Eu vi este caso por causa da minha experiência como testador.
 
 
 ### Para saídas esperadas
