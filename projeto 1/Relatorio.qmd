@@ -1,0 +1,170 @@
+---
+title: "Relatório Trabalho Prático de Teste Baseado em Especificação"
+subtitle: "Método para adição de números inteiros muito, muito grandes"
+author: "Aluno Teste de Software"
+toc: true
+toc-title: Sumário
+number-sections: false
+highlight-style: pygments
+format: 
+  html:
+    embed-resources: true
+
+engine: knitr
+---
+
+```{css}
+#| echo: false
+ul,
+p {
+  text-align: justify !important
+}
+```
+
+
+## Introdução
+
+Este documento descreve o processo usado pelo autor do livro texto da disciplina, Mauricio Aniche, ao usar teste baseado em especificação para derivar casos de teste para o método ``substringsBetween()``, discutido em aula.
+
+Use este relatório como um exemplo de como você deve confeccionar o seu relatório. Veja, não precisa ser idêntico ao que está aqui e, claro, não deve ser uma cópia deste documento.
+
+## Passo 2 - Explorar o funcionamento do programa
+
+Meu processo foi o seguinte:
+
+- Vamos ver o programa trabalhando em um caso de sucesso. Vou passar a string "abcd" com a tag ``open`` "a" e a tag ``close`` "d";
+  - <(``str``="abcd", ``open``="a", ``close``="d"), (["bc"])>
+- Em seguida, vamos ver o que acontece se houver várias substrings na string principal. Vou passar a string "abcdabcdab" com as mesmas tags ``open`` e ``close``;
+  - <(``str``="abcdabcdab", ``open``="a", ``close``="d"), (["bc", "bc"])>
+- Vou repetir o segundo teste, dobrando os "a"s e os "d"s em todos os parâmetros. Também mudei um dos "bc" para "bf", para que seja mais fácil verificar se o método retorna duas substrings diferentes;
+  - <(``str``="aabcddaabfddaab", ``open``="aa", ``close``="dd"), (["bc", "bf"])>
+
+## Passo 3 - Identificar as partições
+
+### Para cada entrada individualmente
+
+#### Parâmetro ``str``: 
+  
+``str`` pode ser qualquer string. A especificação menciona os casos nulos e vazios; eu os teria testado de qualquer maneira, porque eles são sempre bons casos de teste excepcionais. Dado que esta é uma string (que é basicamente uma lista de caracteres), também vou testar o que acontece se a string tiver comprimento 1.
+
+- ``str`` com valor ``null``;
+- ``str`` vazia;
+- ``len(str)==1``;
+- ``len(str)>1`` (qualquer string).
+
+#### Parâmetro ``open``: 
+
+``open`` também pode ser qualquer coisa. Vou tentar com nulo e vazio, pois aprendi com o parâmetro ``str`` que esses casos são especiais neste método. Também vou tentar strings com comprimento 1 e maior que 1.
+
+  - ``open`` com valor ``null``;
+  - ``open`` vazia;
+  - ``len(open)==1``;
+  - ``len(open)>1``.
+
+
+#### Parâmetro ``close``: 
+
+``close`` é exatamente como o anterior.
+
+  - ``close`` com valor ``null``;
+  - ``close`` vazia;
+  - ``len(close)==1``;
+  - ``len(close)>1``.
+
+
+### Para combinações de entradas
+
+Fica claro que as três variáveis têm uma relação de dependência. 
+
+- (``str``, ``open``, ``close``) - ``open`` e ``close`` podem ou não estar na string. Além disso, ``open`` pode existir, mas ``close`` pode não existir em ``str`` (e vice-versa):
+  - ``str`` não contém nem ``open`` nem ``close``;
+  - ``str`` contém ``open`` mas não contém ``close``;
+  - ``str`` não contém ``open`` mas contém ``close``;
+  - ``str`` contém ``open`` e ``close``;
+  - ``str`` contém ``open`` e ``close`` muitas vezes.
+
+O documento não menciona explicitamente que as tags podem não existir em ``str``, nem menciona que a tag ``open`` pode estar presente, mas a tag de ``close`` não. Eu vi este caso por causa da minha experiência como testador.
+
+
+### Para saídas esperadas
+
+Finalmente, refleti sobre as possíveis saídas. O método retorna uma array de sub-strings. Posso ver um conjunto de possíveis saídas diferentes, tanto para o próprio array quanto para as strings dentro do array:
+
+- Array de strings
+  - array com valor ``null``;
+  - array vazio;
+  - array com um elemento;
+  - array com muitos elementos.
+- Cada string individualmente dentro do array de saída
+  - vazia;
+  - apenas um caracter;
+  - múltiplos caracteres.   
+
+
+## Passo 4 - Identificar os valores limite
+
+Bugs nos limites do domínio de entrada são comuns em sistemas de software. Quando criamos partições, elas têm valores limites próximos que "dividem" as partições equivalentes. Sempre que um valor limite é identificado, gosto de testar o que acontece com o programa quando as entradas vão de um limite para o outro. Ou seja, teste de dois pontos quando há um valor limite. Um teste é para o *on point* , que é o ponto que está dentro da partição; e o outro teste é para o "off point", que é o ponto mais próximo do valor limite que pertence à partição à qual o *on point* não pertence (ou seja, a outra partição).
+
+No caso de  ``substringsBetween()``, um limite acontece quando a string de saída passa de vazia para não vazia, isto é, o programa para de retornar vazio e (possivelmente) começará a retornar algo. Eu já cobri esse limite, pois tem partições para ambos os casos.  O método pode receber o parâmetro ``str`` com nenhuma substring, uma substring ou várias substrings. E, as tags ``open`` e ``closed`` podem não estar na string; ou, mais importante, elas podem estar em ``str``, mas sem substring entre elas. Este é um limite que vou chamar de "sem substring de saída/uma substring de saída", e ainda não foi testado, devo testar. 
+
+Neste caso, sempre que identificamos um limite, criamos dois testes para ele, um para cada lado do limite (*in point* e *out point*). Para o limite "sem substring de saída/uma substring de saída", os dois testes são os seguintes:
+  - ``str`` contém ``open`` e também ``close``, mas sem caracteres entre elas
+  - ``str`` contém ``open`` e também ``close``, mas com caracteres entre elas
+
+## Passo 5 -  Derivar os casos de teste
+
+Idealmente, combinaríamos todas as partições que criamos para cada uma das entradas: $4 × 4 × 4 × 5 = 320$ testes. Para evitar uma explosão de casos de teste (320), vou eliminar algumas combinações de partições que possuem uma chance pequena de revelar erros. A ideia é testar casos excepcionais apenas uma vez e não combiná-los. Portanto, todas as partições com ``null`` ou vazio serão testar individualmente e não combinadas com outras partições. Também, existem partições que não necessitam ser completamente combinadas:
+
+- ``len(str)==1`` apenas dois testes são necessários:
+  - Apenas um caracter em ``str`` que é encontrado por ``open`` e ``close`` e outro que não é;
+- não acredito que o método trata ``open`` e ``close`` de tamanhos diferentes de diferentes maneiras, então não são necessárias as 4 combinações: (``len(open)==1``, ``len(close)==1``); (``len(open)>1``, ``len(close)==1``); (``len(open)==1``, ``len(close)>1``) e ()``len(open) > 1``, ``len(close) > 1``):
+  - Apenas (``len(open)== 1``, ``len(close)==1``) e ``len(open)>1``, ``len(close)>1``). 
+
+Portanto, seguindo essas duas ideias, na lista a seguir, marquei com um  [x] partições que não testarei várias vezes: 
+
+- ``str``: ``null`` [x], string vazia [x], ``len(str)==1`` [x], ``len(str)>1``;
+- ``open``: ``null`` [x], empty string [x], ``len(open)==1``, ``len(open)>1``;
+- ``close``: ``null`` [x], empty string [x], ``len(close)==1``, ``len(close)>1``; 
+- (``str``, ``open``, ``close``): string não contém a tag ``open`` nem  a tag ``close``, string contém a tag ``close``, mas não contém a tag ``open``, string contém as tags ``open`` e ``close``, string contém as tags ``open`` e ``close`` muitas vezes.
+
+Podemos derivar os casos de teste realizando a combinação adequada entre as partições. 
+
+- Casos de teste de excessão
+  - T01: ``str==null``
+  - T02: ``str`` vazia
+  - T03: ``open==null``
+  - T04: ``open`` vazia
+  - T05: ``close ==null``
+  - T06: ``close`` vazia
+- Casos de teste considerando ``len(str)==1``
+  - T07: O único caracter de ``str`` casa com ``open``
+  - T08: O único caracter de ``str`` casa com ``close``
+  - T09: O único caracter de ``str`` não casa com ``open`` nem ``close``
+  - T10: O único caracter de ``str`` casa com ``open`` e ``close``
+- Casos de teste considerando ``len(str)>1``, ``len(open)==1`` e ``len(close)==1``
+  - T11: ``str`` não contém ``open`` nem ``close``
+  - T12: ``str`` contém ``open`` mas não contém but does not contain the ``close`` 
+  - T13: ``str`` contém ``close`` mas não contém ``open`` 
+  - T14: ``str`` contém ``open`` e ``close``
+  - T15: ``str`` contém ``open`` e ``close`` múltiplas vezes
+- Casos de teste considerando ``len(str)>1``, ``len(open)>1`` e ``len(close)>1``
+  - T16: similar ao T11
+  - T17: similar ao T12
+  - T18: similar ao T13 
+  - T19: similar ao T14
+  - T20: similar ao T15
+- Casos de teste de valor limite
+  - T21: ``str`` contém ``open`` e ``close`` sem caracteres entre eles
+
+## Passo 6 - Automatizar os casos de teste usando JUnit
+
+::: {.callout-note}
+Aqui você deve descrever as dificuldades ou limitações que teve ao implementar os casos de teste usando JUnit.
+:::
+
+## Passo 7 - Aumentar a suíte de testes por meio de experiência e criatividade
+
+Ao revisitar os testes, notei que nunca testei strings com espaços. Decidi projetar dois testes extras baseados em T15 e T20 (não alterei esses dois casos de teste, adicionei dois casos de teste extras), ambos sobre "``str`` contém as tags ``open`` e ``close`` várias vezes": 
+
+  - (T22) um para ``len(open)==1`` e ``len(close)==1``;
+  - (T23) um para ``len(open)>1`` e ``len(close)>1``, mas tamanhos de ``open`` e ``close`` bastante grandes.
