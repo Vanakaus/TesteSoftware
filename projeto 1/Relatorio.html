@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Aluno Teste de Software">
+<meta name="author" content="Vinicius Simões Vieira">
 
 <title>Relatório Trabalho Prático de Teste Baseado em Especificação</title>
 <style>
@@ -3043,12 +3043,12 @@ vertical-align: -.125em;
    
   <ul>
   <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução">Introdução</a></li>
-  <li><a href="#sec-p2" id="toc-sec-p2" class="nav-link" data-scroll-target="#sec-p2">Passo 2 - Explorar o funcionamento do programa</a></li>
+  <li><a href="#passo-2---explorar-o-funcionamento-do-programa" id="toc-passo-2---explorar-o-funcionamento-do-programa" class="nav-link" data-scroll-target="#passo-2---explorar-o-funcionamento-do-programa">Passo 2 - Explorar o funcionamento do programa</a></li>
   <li><a href="#passo-3---identificar-as-partições" id="toc-passo-3---identificar-as-partições" class="nav-link" data-scroll-target="#passo-3---identificar-as-partições">Passo 3 - Identificar as partições</a>
   <ul class="collapse">
-  <li><a href="#parâmetro-s" id="toc-parâmetro-s" class="nav-link" data-scroll-target="#parâmetro-s">Parâmetro <code>s</code>:</a></li>
-  <li><a href="#combinações-de-entradas" id="toc-combinações-de-entradas" class="nav-link" data-scroll-target="#combinações-de-entradas">Combinações de Entradas</a></li>
-  <li><a href="#saídas-esperadas" id="toc-saídas-esperadas" class="nav-link" data-scroll-target="#saídas-esperadas">Saídas Esperadas</a></li>
+  <li><a href="#para-cada-entrada-individualmente" id="toc-para-cada-entrada-individualmente" class="nav-link" data-scroll-target="#para-cada-entrada-individualmente">Para cada entrada individualmente</a></li>
+  <li><a href="#para-combinações-de-entradas" id="toc-para-combinações-de-entradas" class="nav-link" data-scroll-target="#para-combinações-de-entradas">Para combinações de entradas</a></li>
+  <li><a href="#para-saídas-esperadas" id="toc-para-saídas-esperadas" class="nav-link" data-scroll-target="#para-saídas-esperadas">Para saídas esperadas</a></li>
   </ul></li>
   <li><a href="#passo-4---identificar-os-valores-limite" id="toc-passo-4---identificar-os-valores-limite" class="nav-link" data-scroll-target="#passo-4---identificar-os-valores-limite">Passo 4 - Identificar os valores limite</a></li>
   <li><a href="#passo-5---derivar-os-casos-de-teste" id="toc-passo-5---derivar-os-casos-de-teste" class="nav-link" data-scroll-target="#passo-5---derivar-os-casos-de-teste">Passo 5 - Derivar os casos de teste</a></li>
@@ -3072,7 +3072,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Aluno Teste de Software </p>
+             <p>Vinicius Simões Vieira </p>
           </div>
   </div>
     
@@ -3095,104 +3095,143 @@ text-align: justify !important
 </div>
 <section id="introdução" class="level2">
 <h2 class="anchored" data-anchor-id="introdução">Introdução</h2>
-<p>Este documento descreve o processo e o raciocínio usado para derivar casos de teste para o método <code>validateIdentifier()</code> da classe <code>Identifier()</code>. Este processo foi baseado no exemplo do autor do livro texto da disciplina, Mauricio Aniche, ao derivar testes para o método <code>substringsBetween()</code>, discutido em aula.</p>
+<p>Este relatório descreve o processo da criação de testes automatizados para um método específico que realiza a soma de dois números grandes manipulando cada número com um array, separando cada algarismo do número em posições no array. E como retorno deste método, será mais um array contendo os algarismos do resultado da soma.</p>
+<p>A seguir temos o processo de cada um dos passos realizados neste trabalho.</p>
 </section>
-<section id="sec-p2" class="level2">
-<h2 class="anchored" data-anchor-id="sec-p2">Passo 2 - Explorar o funcionamento do programa</h2>
-<p>O processo realizado foi o seguinte:</p>
+<section id="passo-2---explorar-o-funcionamento-do-programa" class="level2">
+<h2 class="anchored" data-anchor-id="passo-2---explorar-o-funcionamento-do-programa">Passo 2 - Explorar o funcionamento do programa</h2>
+<p>Neste passo vamos verificar o funcionamento do método, anotando as entradas e saidas esperadas:</p>
 <ul>
-<li>Entender o objetivo do método, entendendo suas entradas e saidas plaussiveis de erro, falha, e sucesso. Neste caso, o método recebe uma string <code>s</code> de entrada e retorna um boolean. E seu processamento segue em verificar se a string é valida, baseada na quantidade de caracteres, quais os caracteres, e o caractere inicial;
+<li>O método deve receber dois arrays de inteiros formando dois números e retorar um array de inteiro formando o resultado deles:
 <ul>
-<li>&lt;(<code>s</code>=“abcd”), (<code>true</code>)&gt;</li>
+<li>&lt;(<code>left</code>=“[1, 2, 3]”, <code>rigth</code>=“[3, 2, 1]”), (“[4, 4, 4]”)&gt;</li>
 </ul></li>
-<li>Em seguida, vamos analizar quais são os parametros para retornar <code>true</code> e <code>false</code>. Para retorno <code>true</code>, deve-se iniciar com letra, não conter caracteres diferentes de letras ou números(caracteres especiais) e ter comprimento entre 1 a 6 caracteres;
+<li>Caso os parâmetros de entrada (<code>left</code> ou <code>rigth</code>) contenham algum inteiro que nao esteja entre 0 e 9, o método deve retornar um <code>IllegalArgumentException</code>:
 <ul>
-<li>&lt;(<code>s</code>=“a”), (<code>true</code>)&gt;</li>
-<li>&lt;(<code>s</code>=“a123”), (<code>true</code>)&gt;</li>
-<li>&lt;(<code>s</code>=“abcdef”), (<code>true</code>)&gt;</li>
+<li>&lt;(<code>left</code>=“[1, 2, 3]”, <code>rigth</code>=“[3, 2, 1]”), (“<code>IllegalArgumentException</code>”)&gt;</li>
 </ul></li>
-<li>Por fim, foi repetido o passo anterior verificando o retorno <code>false</code>. Para isto, entramos com uma string com menos de 1 caractere ou mais que 6 caracteres, uma string que não começa com uma letra, ou que contenha carateres diferentes de letras ou numeros(caracteres especiais);
+<li>Caso os parâmetros de entrada (<code>left</code> ou <code>rigth</code>) sejam uma lista vazia, o método também deve retornar uma lista vazia:
 <ul>
-<li>&lt;(<code>s</code>=““), (<code>false</code>)&gt;</li>
-<li>&lt;(<code>s</code>=“asdasdasd”), (<code>false</code>)&gt;</li>
-<li>&lt;(<code>s</code>=“1asd”), (<code>false</code>)&gt;</li>
-<li>&lt;(<code>s</code>=“a@”), (<code>false</code>)&gt;</li>
+<li>&lt;(<code>left</code>=“[]”, <code>rigth</code>=“[3, 2, 1]”), (“[]”)&gt;</li>
+</ul></li>
+<li>Caso os parâmetros de entrada (<code>left</code> ou <code>rigth</code>) sejam <code>null</code>, o método também deve retornar <code>null</code>:
+<ul>
+<li>&lt;(<code>left</code>=“<code>null</code>”, <code>rigth</code>=“[3, 2, 1]”), (“<code>null</code>”)&gt;</li>
 </ul></li>
 </ul>
 </section>
 <section id="passo-3---identificar-as-partições" class="level2">
 <h2 class="anchored" data-anchor-id="passo-3---identificar-as-partições">Passo 3 - Identificar as partições</h2>
-<section id="parâmetro-s" class="level3">
-<h3 class="anchored" data-anchor-id="parâmetro-s">Parâmetro <code>s</code>:</h3>
-<p>Como vemos no passo anterior, <code>s</code> pode ser qualquer string, mas ao verificarmos a especificação conseguimos separar em conjuntos que devem ser verificados. Alén destes conjuntos eu sempre adiciono casos de entrada <code>null</code> e string vazia, neste caso a string vazia entra no conjunto de strings com menos de um caravtere. Dito isto, vamos separar os conjuntos da seguinte maneira:</p>
+<section id="para-cada-entrada-individualmente" class="level3">
+<h3 class="anchored" data-anchor-id="para-cada-entrada-individualmente">Para cada entrada individualmente</h3>
+<section id="parâmetro-left-e-rigth" class="level4">
+<h4 class="anchored" data-anchor-id="parâmetro-left-e-rigth">Parâmetro <code>left</code> e <code>rigth</code>:</h4>
+<p>Os parãmetros <code>left</code> e <code>rigth</code> possuem a mesma estrutura e são esperadas os mesmos tipos de dados(número inteiro, separando os algarismos dentro de um array), então irá ser discutido e explanada está análise apenas uma vez, mas nos proximos passos, ao realizar a combinação das entradas estes valores serão duplicados para realizar o calculo de possibilidades de testes distintos.</p>
+<p>Sendo assim, estes parâmetros deven ser uma lista de inteiros(<code>List&lt;Integer&gt;</code>), que podem possuir valor nulo, uma lista vazia(<code>len(left)==0</code>), uma lista com apenas um algarismo(<code>len(left)==1</code>), uma lista com n algarismos(<code>len(left)&gt;1</code>), sendo n maior que 1, e para os casos que possuem algarismos podemos ter numeros inteiros válidos([0, 9]) e inválidos([-∞, -1],[9, +∞]). Com isto temos a seguinte lista: - <code>left</code> === <code>null</code>; - <code>left</code> === <a href="vazio"></a>; - <code>len(left)==1</code>; - <code>left[0]</code> == [0, 9]; - <code>left[0]</code> != [0, 9]; - <code>len(left)&gt;1</code> (qualquer numero com, pelomenos, dois algarismos). - <code>left[[0, --n]]</code> == [0, 9]; - <code>left[[0, --n]]</code> != [0, 9];</p>
+</section>
+</section>
+<section id="para-combinações-de-entradas" class="level3">
+<h3 class="anchored" data-anchor-id="para-combinações-de-entradas">Para combinações de entradas</h3>
+<p>Com isto vemos que os parametros possuem uma relação de depêndencia, já que ambos precisam ser válidos para que haja um resultado válido, portanto eles serão combinados entre si, para verificar cada caso possível das entradas. Isto siginifica que podemos possuir até 36 casos possíveis noeste momento, sendo left qualquer um dos seis casos, para cada um dos 6 casos de rigth, <code>6 x 6 = 36</code>, felizmente estes casos serão derivados em uma menor quantidade de casos, mais a frente no relatório. Porém antes iremos coletar mais informações e possibilidades para o método, explorando as saidas esperadas e os valores limites nos próximos passos.</p>
+</section>
+<section id="para-saídas-esperadas" class="level3">
+<h3 class="anchored" data-anchor-id="para-saídas-esperadas">Para saídas esperadas</h3>
+<p>Por fim vamos analisar as possíveis saídas do método, as quais, indiretamente, já foram discutidas no passo 2, sendo elas um retorno <code>null</code>, um <code>IllegalArgumentException</code> ou um array de inteiros com algarismos válidos([0, 9]). Com isto temos a seguinte lista:</p>
 <ul>
-<li><code>s</code> com valor <code>null</code>;</li>
-<li><code>s</code> vazia(<code>len(s)&lt;1</code>);</li>
-<li><code>len(s)==1</code>, sendo:
+<li><code>null</code>;</li>
+<li><code>IllegalArgumentException</code>;</li>
+<li>array de inteiros:
 <ul>
-<li><code>s[0] === letra</code>;</li>
-<li><code>s[0] === LETRA</code>;</li>
-<li><code>s[0] === numero</code>;</li>
-<li><code>s[0] === caractere especial</code>;</li>
+<li>array com um algarismo;</li>
+<li>array com n algarismos, sendo n maior que 1.</li>
 </ul></li>
-<li><code>len(s)&gt;1</code> e <code>len(s)&lt;=6</code>, sendo:
-<ul>
-<li><code>s</code> contém apenas letras;</li>
-<li><code>s</code> contém apenas números;</li>
-<li><code>s</code> contém letras e numeros;</li>
-<li><code>s</code> contém caracteres especiais.</li>
-</ul></li>
-<li><code>len(s)&gt;6</code>, sendo:
-<ul>
-<li><code>s</code> contém apenas letras;</li>
-<li><code>s</code> contém apenas números;</li>
-<li><code>s</code> contém letras e numeros;</li>
-<li><code>s</code> contém caracteres especiais.</li>
-</ul></li>
+<li>Cada algarismo do array deve ser um inteiro entre 0 e 9.</li>
 </ul>
-</section>
-<section id="combinações-de-entradas" class="level3">
-<h3 class="anchored" data-anchor-id="combinações-de-entradas">Combinações de Entradas</h3>
-<p>Por ter apenas um parâmetro de entrada, não há combinações de entradas, mas dentro da mesmaentrada temos as 9 possibilidades listadas acima.</p>
-</section>
-<section id="saídas-esperadas" class="level3">
-<h3 class="anchored" data-anchor-id="saídas-esperadas">Saídas Esperadas</h3>
-<p>Por fim, vamos analizar as saidas possíveis. Este método é do tipo boolean, então não há muitas possibilidades, apenas <code>true</code> e <code>false</code>, e os motivos para cada possibilidade foram discutidos no <a href="#sec-p2" class="quarto-xref">Passo 2</a>.</p>
 </section>
 </section>
 <section id="passo-4---identificar-os-valores-limite" class="level2">
 <h2 class="anchored" data-anchor-id="passo-4---identificar-os-valores-limite">Passo 4 - Identificar os valores limite</h2>
-<p>Valores no limite dos consjuntos de entrada são comunmente confundidos no processamento do método, fazendo-se importante verifica-los em especial. Neste método, não há muitos valores limites, já que a diferença entre a maioria dos conjuntos são bem definidas. Os únicos conjuntos que há valores limites, são os conjuntos referentes ao comprimento da string, sendo o limite inferior, entrada com pelo menos um caractere, o qual já está listado para testar, pois entra em outro parametro de teste. E o outro valor limite é o limite superior, entrada com até 6 caracteres, para isto será adicionado mais dois testes que passam em todos as características, com 6 e com 7 caracteres:</p>
+<p>Neste passo, vamos identificar os valores limite, entre os conjuntos de entradas e saídas esperados, para que possamos criar casos de teste que explorem esses limites, afim de verificar se a divisão entre as partições está correta e se nao há algum equivo nos valores limites. Neste exercício, ja vimos alguns valores limites, como a entrada <code>null</code> e uma lista vazia, porém como eles são valores únicos e visados, eles já estão cobertos pelas partições, então não precisamos nos preocupar com eles. Entretanto possuimos outros valores limites ao se tratar dos algarismos dos números, que são os valores que devem estar dentro do intervalo válido([0, 9]), por termos um intervalo fechado, temos que os valores limites são -1 e 0 para o limite inferior e 9 e 10 para o limite superior. Por fim teremos os seguintes vlaores limites:</p>
 <ul>
-<li><code>len(s)==6</code>, <code>s</code>=“abcdef”;</li>
-<li><code>len(s)==7</code>, <code>s</code>=“abcdefg”.</li>
+<li>Para cada parâmetro de entrada(<code>left</code>, <code>rigth</code>):
+<ul>
+<li><code>null</code>*;</li>
+<li><code>[]</code>*;</li>
+<li><code>left[n]</code> == -1;</li>
+<li><code>left[n]</code> == 0;</li>
+<li><code>left[n]</code> == 9;</li>
+<li><code>left[n]</code> == 10;</li>
+</ul></li>
 </ul>
+<p>Obs: * já estão cobertos pelas partições.</p>
+<p>Lembrando que são dois parâmetros de entrada com padrões iguais, então os valores limites são os mesmos para ambos, multiplicando os casos de teste, considerando o cenário de de combinações de entrada, temos mais 16 casos de teste, que serão derivados no próximo passo.</p>
 </section>
 <section id="passo-5---derivar-os-casos-de-teste" class="level2">
 <h2 class="anchored" data-anchor-id="passo-5---derivar-os-casos-de-teste">Passo 5 - Derivar os casos de teste</h2>
-<p>Como dito anteriormente, este método não possui muitas combinações, as quais, geralmente, onde podemos derivar bastante. Porém, podemos derivar os testes de apenas números, pois ao testar se a string começa com letra, impossibilita a possibilidade de termos uma string contendo apenas números. Além disso também podemos testar o limite superior junto ao teste com quantidade entre 1 a 6 caracteres, fazendo com que todos os testes deste conjunto sejam com comprimento de 6 caracteres.</p>
+<p>Até o determinado momento, temos 36 casos de teste possíveis, mais as 16 combinações de valores limites. Porém, vamos realizar aderivação dos mesmo, revisando casos e combinações em que os testes estão repetidos, ou testes que se fazem desnecessários pois outros testes impossibilitam que eles ocorram. No caso deste método, as entradas são identicas em seus formatos e valores esperados, então podemos trocar a combinação das entradas, por verificações separadas para cada uma das entradas, logo, ao inves de termos <code>6x6</code> casos de teste, teremos <code>6+6</code> casos de teste, o que nos dá 12 casos de teste vindos das partições. Mas temos também os valores limites, que por sua vez, nos permite combinar com as partições nao <code>nulas</code> e não vazias:</p>
+<ul>
+<li><code>len(left)==1</code>;</li>
+<li><code>len(left)&gt;1</code>;</li>
+</ul>
+<p>Com isto combinaremos os valores limites(4), com cada parametro de entrada(2), e com cada partição(2). Com isto, temos 4 valores limites, 2 parâmetros e 2 partições para cada parâmetro, o que nos dá <code>4x2x2=16</code> casos de teste. E dentro destes casos de teste com valores limites, temos testes repetidos sobre valores válidos nas partições padrões, então vamos remover os testes inicias e utilizar os testes com valores limites, removendo assim 8 testes inicias, diminuindo 12 para 4. Com isto temos um total de 20 casos de teste, sendo eles:</p>
+<ul>
+<li>Testes de entrada <code>null</code>:
+<ul>
+<li>T01: <code>left==null</code>;</li>
+<li>T02: <code>rigth==null</code>;</li>
+</ul></li>
+<li>Testes de entrada vazia:
+<ul>
+<li>T03: <code>left==[]</code>;</li>
+<li>T04: <code>rigth==[]</code>;</li>
+</ul></li>
+<li>Testes de array unitário com valores limites:
+<ul>
+<li>T05: <code>left==[-1]</code>;</li>
+<li>T06: <code>left==[0]</code>;</li>
+<li>T07: <code>left==[9]</code>;</li>
+<li>T08: <code>left==[10]</code>;</li>
+<li>T09: <code>rigth==[-1]</code>;</li>
+<li>T10: <code>rigth==[0]</code>;</li>
+<li>T11: <code>rigth==[9]</code>;</li>
+<li>T12: <code>rigth==[10]</code>;</li>
+</ul></li>
+<li>Testes de array com mais de um algarismo com valores limites:
+<ul>
+<li>T13: <code>left==[-1, 0, 1, 2, 3]</code>;</li>
+<li>T14: <code>left==[0, 1, 2, 3, 4]</code>;</li>
+<li>T15: <code>left==[5, 6, 7, 8, 9]</code>;</li>
+<li>T16: <code>left==[6, 7, 8, 9, 10]</code>;</li>
+<li>T17: <code>rigth==[-1, 0, 1, 2, 3]</code>;</li>
+<li>T18: <code>rigth==[0, 1, 2, 3, 4]</code>;</li>
+<li>T19: <code>rigth==[5, 6, 7, 8, 9]</code>;</li>
+<li>T20: <code>rigth==[6, 7, 8, 9, 10]</code>;</li>
+</ul></li>
+</ul>
 </section>
 <section id="passo-6---automatizar-os-casos-de-teste-usando-junit" class="level2">
 <h2 class="anchored" data-anchor-id="passo-6---automatizar-os-casos-de-teste-usando-junit">Passo 6 - Automatizar os casos de teste usando JUnit</h2>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Aqui você deve descrever as dificuldades ou limitações que teve ao implementar os casos de teste usando JUnit.</p>
-</div>
-</div>
-<p>Como maior dificuldade podemos resaltar a escolha de multiplos testes para um mesmo conjunto, como por exemplo, no conjunto de <code>s&gt;6</code>, iremos colocar testes com apenas letras, com apenas numeros, com caracteres especiais, vamos combinar todas as 3 possibilidades, e etc. Como resultado, foi criado um teste com apenas letras, um com letras e números, e outro com caracteres especiais. Esta decisão foi baseado no fato de testes que não iniciam com letras ja foi implementando, fazendo dessinteressante testes com apenas números e/ou caracteres.</p>
-<p>Além disto teve a dificuldade no processo de quanto e aonde é possível derivar os testes, alem da organização ao juntar diferentes entradas dentro dos testes.</p>
+<p>Ao automatizar os testes, separa os mesmo em partições do mesmo tipo, dentro de funções teste, por exemplo, todos os testes com array de entrada com valor unitário, foram colocados dentro de uma unica função de teste, e assim por diante. Neste case não houve grandes complicações, mas apenas uma pesquisa para entender o funcionamento do Junit em casos de <code>trow new Exception()</code>, que neste caso foi a exceção <code>IllegalArgumentException</code>.</p>
+<p>O problema encontrado foi a tentative reutilizar as entradas em testes diferentes, porém o método testado inverte os arrays, infelizmente invertendo o array original, e não somente a copia enviada para o método. Com isto, foi necessário criar novos arrays com dados brutos, um para cada teste, o que não é um problema, mas poderia ser mais prático se fosse possível reutilizar os valores de entrada.</p>
 </section>
 <section id="passo-7---aumentar-a-suíte-de-testes-por-meio-de-experiência-e-criatividade" class="level2">
 <h2 class="anchored" data-anchor-id="passo-7---aumentar-a-suíte-de-testes-por-meio-de-experiência-e-criatividade">Passo 7 - Aumentar a suíte de testes por meio de experiência e criatividade</h2>
-<p>Este exemplo não há muita margem para testes muitos diferentes. Acredito que os testes mais diferentes possiveis são os testes com valor null e vazio, além do uso de caracteres especiais, principalmente caracteres em branco. Porém estes testes foram implementados nos passos anteriores.</p>
+<p>Por fim, foi lembrado que operações de soma de números inteiros, podem conter números que ao serem somados podem ultrapasar a dezena, somando <code>1</code> ao proximo algarismo, e para este caso podemos ter mais duas situações, quando o há um próximo algarismo para somar e quando não há, criando um algorismo novo. Com isto, foram criados mais 2, sendo eles:</p>
+<ul>
+<li>Testes de soma com unidades grandes:
+<ul>
+<li>T21: <code>left==[1,6], rigth==[1,6]</code>;</li>
+<li>T22: <code>left==[9, 9], rigth==[9, 9]</code>;</li>
+</ul></li>
+</ul>
+<p>Alem deste também possuímos os casos em que os números possuem tamanhos diferentes, e que um deles é maior que o outro, e para este caso, foi criado mais 2 testes:</p>
+<ul>
+<li>Testes de soma com tamanhos diferentes:
+<ul>
+<li>T23: <code>left==[1, 2, 3, 4], rigth==[1, 2, 3]</code>;</li>
+<li>T24: <code>left==[1, 2, 3], rigth==[1, 2, 3, 4]</code>;</li>
+</ul></li>
+</ul>
 </section>
 
 </main>
