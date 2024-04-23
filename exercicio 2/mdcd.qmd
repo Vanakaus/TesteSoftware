@@ -1,0 +1,106 @@
+
+---
+title: "Relatório Processo MD/MC"
+subtitle: "Processo para selecionar testes baseado no método MD/MC"
+author: "Vinicius Simões Vieira"
+toc: true
+toc-title: Sumário
+number-sections: false
+highlight-style: pygments
+format: 
+  html:
+    embed-resources: true
+
+engine: knitr
+---
+
+```{css}
+#| echo: false
+ul,
+p {
+  text-align: justify !important
+}
+```
+
+
+## Introdução
+
+Este relatório descreve o processo do MD/MC sobre a condição da linha 30 na função ```validateIdentifier```:
+
+- if(valid_id && (s.length() >= 1) && (s.length() < 6))
+
+
+## Passo 1 - Montr a tabela com todas as possibilidades
+
+Neste passo vamos montar uma tabela com cada um das condições, e o resultado da condição completa:
+
+
+| Teste | valid_id | s.length() >= 1 | s.length() < 6 | Resultado |
+|:-----:|:--------:|:---------------:|:--------------:|:---------:|
+| T1    | true     | true            | true           | true      |
+| T2    | true     | true            | false          | false     |
+| T3    | true     | false           | true           | false     |
+| T4    | true     | false           | false          | false     |
+| T5    | false    | true            | true           | false     |
+| T6    | false    | true            | false          | false     |
+| T7    | false    | false           | true           | false     |
+| T8    | false    | false           | false          | false     |
+
+: Tabela MD/MC
+
+
+
+## Passo 2 - Identificar par de Independências
+
+### Condição ```valid_id```:
+
+Os testes que possuem as mesmas entradas, mas que o condicionamento ```valid_id``` seja diferente são:
+
+ - ```{T1, T5}```;
+ - ```{T2, T6}```;
+ - ```{T3, T7}```;
+ - ```{T4, T8}```.
+
+ Para os próximos passos vamos utilizar o primeiro par de independência, ```{T1, T5}```.
+
+
+### Condição ```s.length() >= 1```:
+
+Os testes que possuem as mesmas entradas, mas que o condicionamento ```s.length() >= 1``` seja diferente são:
+
+ - ```{T1, T3}```;
+ - ```{T2, T4}```;
+ - ```{T5, T7}```;
+ - ```{T6, T8}```.
+
+ Para os próximos passos vamos utilizar o primeiro par de independência, ```{T1, T3}```.
+
+
+
+### Condição ```s.length() < 6```:
+
+Os testes que possuem as mesmas entradas, mas que o condicionamento ```s.length() < 6``` seja diferente são:
+
+ - ```{T1, T2}```;
+ - ```{T3, T4}```;
+ - ```{T5, T6}```;
+ - ```{T7, T8}```.
+
+ Para os próximos passos vamos utilizar o primeiro par de independência, ```{T1, T2}```.
+
+
+
+
+## Passo 3 - Juntar os testes dos Pares de Independência
+
+Neste passo, vamos juntar os testes dos pares de independência, com isto devemos ter N + 1 testes, sendo N a quantidade de condições do blco IF. Juntando os seguintes pares de independência:
+- ```{T1, T5}```;
+- ```{T1, T3}```;
+- ```{T1, T2}```.
+
+
+Juntando cada um destes pares temos o conjunto:
+
+- ```{T1, T2, T3, T5}```.
+
+
